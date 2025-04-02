@@ -1,60 +1,39 @@
 package com.project.blog_application.entities;
 
 import java.time.LocalDateTime;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+
+import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Entity
-@Table(name = "likes")  // This will map to the "likes" table in your database
+@Table(name = "likes" , uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"user_id", "blog_post_id"})
+})
+@Data // Automatically generates getters, setters, equals, hashCode, and toString methods
+@AllArgsConstructor
+@NoArgsConstructor
 public class Like {
-    
-    @Id  
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY) 
-    @JoinColumn(name = "user_id", nullable = false)  // Specifies the foreign key column (user_id); cannot be null
-    private User user;  // The user who liked the blog post
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)    
-    @JoinColumn(name = "blog_post_id", nullable = false)  
-    private BlogPost blogPost;  
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "blog_post_id", nullable = false)
+    private BlogPost blogPost;
 
-    public Like() {}
+    @Column(name = "created_at" , nullable = false, updatable = false) 
+    private LocalDateTime createdAt; // This is the timestamp when the like was created
 
-    public Like(User user, BlogPost blogPost, LocalDateTime likedAt) {
-        this.user = user;
-        this.blogPost = blogPost;
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
     }
-    
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public BlogPost getPost() {
-        return blogPost;
-    }
-
-    public void setPost(BlogPost post) {
-        this.blogPost = post;
-    }
-
 }

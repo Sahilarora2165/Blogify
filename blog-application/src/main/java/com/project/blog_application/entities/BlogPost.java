@@ -2,7 +2,10 @@ package com.project.blog_application.entities;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import javax.validation.constraints.NotBlank;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -56,6 +59,6 @@ public class BlogPost {
     @JsonIgnore
     private List<Comment> comments = new ArrayList<>();
 
-    
-
+    @OneToMany(mappedBy = "blogPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Like> likes = new HashSet<>();
 }

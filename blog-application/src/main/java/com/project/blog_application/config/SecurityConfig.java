@@ -56,7 +56,9 @@ public class SecurityConfig {
                                 "/api/users/register",
                                 "/api/posts",
                                 "/api/posts/{id}",
+                                "/api/likes/status",
                                 "/api/comments",
+                                "api/likes/test",
                                 "/api/comments/{id}",
                                 "/api/comments/blog/{BlogPostId}",
                                 "/uploads/**").permitAll()
