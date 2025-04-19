@@ -35,55 +35,43 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // Filters incoming requests to validate JWT and set authentication
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
-            @NonNull FilterChain chain)
-            throws ServletException, IOException {
-        // Skip JWT validation for login and signup endpoints since they generate tokens
-        String requestURI = request.getRequestURI();
-        if (requestURI.equals("/api/auth/login") || requestURI.equals("/api/auth/signup") ||
-                requestURI.equals("/api/users/login") || requestURI.equals("/api/users/register")) { // ✅ Skip Google login
-            logger.debug("Skipping JWT filter for auth endpoint: {}", requestURI);
-            chain.doFilter(request, response);
-            return;
-        }
-        // Extract Authorization header from the request
+            @NonNull FilterChain chain) throws ServletException, IOException {
+        String method = request.getMethod();
+        String uri = request.getRequestURI();
+        logger.info("Request: {} {}", method, uri);
+
         String header = request.getHeader("Authorization");
-        logger.info("Received Authorization header: {}", header);
+        logger.info("Header: {}", header);
 
-        // Check if header exists and is a Bearer token (case-insensitive)
         if (header != null && header.toLowerCase().startsWith("bearer ")) {
-            String token = header.substring(7); // Extract token by removing "Bearer " prefix (case-insensitive)
-            logger.info("Processing token: {}", token);
-
+            String token = header.substring(7);
+            logger.info("Token: {}", token);
             try {
-                // Extract email from token and validate it using JwtUtil
                 String email = jwtUtil.extractEmail(token);
-                if (email != null && jwtUtil.validateToken(token, email)) {
-                    // Load user details by email (not username) to match JwtUtil's subject
+                logger.info("Email: {}", email);
+                boolean valid = jwtUtil.validateToken(token, email);
+                logger.info("Token valid: {}", valid);
+                if (valid) {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-                    logger.info("Authorities loaded for user {}: {}", email, userDetails.getAuthorities());
-
+                    logger.info("User: {}, Roles: {}", userDetails.getUsername(), userDetails.getAuthorities());
                     UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(auth);
-                    logger.debug("Authentication set for user: {}", email);
+                    logger.info("Auth set for {} {}", method, uri);
                 } else {
-                    logger.error("Token validation failed: Invalid or expired token for email: {}", email);
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token");
+                    logger.error("Invalid token for {} {}", method, uri);
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
                     return;
                 }
             } catch (Exception e) {
-                // Log token validation failures and clear context to prevent unauthorized
-                // access
-                logger.error("Token validation failed: {}", e.getMessage(), e); // Add stack trace for debugging
-                SecurityContextHolder.clearContext();
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token");
-                return; // Stop the filter chain on failure
+                logger.error("Token error for {} {}: {}", method, uri, e.getMessage(), e);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token error");
+                return;
             }
         } else {
-            logger.warn("No Authorization header or not a Bearer token for URI: {}", requestURI);
+            logger.warn("No Bearer token for {} {}", method, uri);
         }
 
-        // Continue the filter chain regardless of authentication outcome
         chain.doFilter(request, response);
     }
 }

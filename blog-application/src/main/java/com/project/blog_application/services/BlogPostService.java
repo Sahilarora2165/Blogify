@@ -75,6 +75,8 @@ public class BlogPostService {
     // permanently delete a blog post
     public void deletePost(Long id) {
         BlogPost existingPost = getBlogPostById(id);
+        existingPost.getLikes().clear(); // Clear to avoid cascading issues
+        existingPost.getComments().clear();
         blogPostRepository.delete(existingPost);
     }
 }

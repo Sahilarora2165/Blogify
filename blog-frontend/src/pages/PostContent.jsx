@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import HomeHeader from "../components/HomeHeader";
-import { MessageCircle, X } from "lucide-react";
+import { MessageCircle, X, ThumbsUp } from "lucide-react"; // Added ThumbsUp icon
 
 const PostContent = () => {
     const { id } = useParams(); // Blog post ID from URL
@@ -13,6 +13,8 @@ const PostContent = () => {
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [likes, setLikes] = useState(0); // Changed initial value to number
+    const [liked, setLiked] = useState(false); // Whether the user liked the post
     const [newComment, setNewComment] = useState(""); // New comment input
     const [showComments, setShowComments] = useState(false); // Control comment slide-in
     const token = localStorage.getItem("token"); // JWT token from localStorage
@@ -68,6 +70,112 @@ const PostContent = () => {
         fetchPostAndComments();
     }, [id]);
 
+    // Fetch the like count and whether the user has liked it:
+    useEffect(() => {
+        const fetchLikes = async () => {
+            try {
+                // Fetch total like count for the post
+                const likesResponse = await axios.get(`http://localhost:8080/api/likes/count/${id}`, {
+                    timeout: 5000
+                });
+                // Convert likes to a number to ensure proper math operations
+                setLikes(Number(likesResponse.data)); // Store total like count as number
+
+                // Check if the user has liked the post (only if logged in)
+                if (!token) return; // No token means user is not logged in
+
+                // Get user ID from backend
+                const userResponse = await axios.get("http://localhost:8080/api/users/me", {
+                    headers: { Authorization: `Bearer ${token}` },
+                    timeout: 5000
+                });
+                const userId = userResponse.data.id;
+
+                // Check if user has liked the post
+                const userLikeResponse = await axios.get(`http://localhost:8080/api/likes/status`, {
+                    params: { userId, blogPostId: id },
+                    headers: { Authorization: `Bearer ${token}` },
+                    timeout: 5000
+                });
+
+                setLiked(userLikeResponse.data); // Boolean: true if liked, false otherwise
+            } catch (err) {
+                console.error("Error fetching likes:", {
+                    message: err.message,
+                    status: err.response ? err.response.status : "No status",
+                    data: err.response ? err.response.data : "No response data"
+                });
+
+                if (err.response?.status === 403) {
+                    setError("Session expired. Please log in again.");
+                    navigate("/login");
+                } else {
+                    setError("Failed to fetch likes.");
+                }
+            }
+        };
+
+        fetchLikes();
+    }, [id, token]); // Runs when 'id' or 'token' changes
+
+
+    const handleLikeToggle = async () => {
+        if (!token) {
+            setError("Please log in to like posts.");
+            navigate("/login");
+            return;
+        }
+
+        try {
+            // Step 1: Get user ID
+            const userResponse = await axios.get("http://localhost:8080/api/users/me", {
+                headers: { Authorization: `Bearer ${token}` },
+                timeout: 5000
+            });
+            const userId = userResponse.data.id;
+
+            // Calculate the new state before making the API call
+            const newLikedState = !liked;
+            const newLikeCount = newLikedState ? likes + 1 : likes - 1;
+            
+            // Update UI immediately (optimistic update)
+            setLiked(newLikedState);
+            setLikes(newLikeCount);
+
+            // Step 2: Toggle like (API call)
+            await axios.post(
+                "http://localhost:8080/api/likes/toggle",
+                null, // No request body, just params
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { userId, blogPostId: id }, // Send userId & postId as query params
+                    timeout: 5000
+                }
+            );
+
+            // No need to update UI again - we already did it optimistically
+            // The server response doesn't actually tell us the new state reliably
+
+        } catch (err) {
+            console.error("Error toggling like:", {
+                message: err.message,
+                status: err.response ? err.response.status : "No status",
+                data: err.response ? err.response.data : "No response data"
+            });
+
+            // Revert the optimistic update since the API call failed
+            setLiked(liked); // Revert to original state
+            setLikes(liked ? likes : likes - 1); // Revert like count
+
+            if (err.response?.status === 403) {
+                setError("Session expired. Please log in again.");
+                navigate("/login");
+            } else {
+                setError("Failed to update like status.");
+            }
+        }
+    };
+
     // Handle comment submission
     const handleCommentSubmit = async (e) => {
         e.preventDefault();
@@ -122,8 +230,6 @@ const PostContent = () => {
         }
     };
 
-
-
     // Toggle comment section visibility
     const toggleComments = () => {
         setShowComments(!showComments);
@@ -161,7 +267,7 @@ const PostContent = () => {
                         {post.title}
                     </h1>
 
-                    {/* Author info with comment count */}
+                    {/* Author info with comment and like buttons */}
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center space-x-3">
                             <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
@@ -183,14 +289,30 @@ const PostContent = () => {
                             </div>
                         </div>
 
-                        {/* Comment Icon with Count */}
-                        <button
-                            onClick={toggleComments}
-                            className="flex items-center space-x-2 text-gray-500 hover:text-gray-900 transition-colors"
-                        >
-                            <MessageCircle className="w-5 h-5" />
-                            <span className="text-sm font-medium">{comments.length}</span>
-                        </button>
+                        {/* Buttons Container */}
+                        <div className="flex items-center space-x-4">
+                            {/* Like Button with ThumbsUp icon */}
+                            <button 
+                                onClick={handleLikeToggle} 
+                                className="flex items-center space-x-2 transition-colors focus:outline-none"
+                            >
+                                <ThumbsUp 
+                                    className={`w-5 h-5 ${liked ? 'text-blue-600 fill-blue-600' : 'text-gray-500 hover:text-gray-900'}`} 
+                                />
+                                <span className={`text-sm font-medium ${liked ? 'text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}>
+                                    {likes}
+                                </span>
+                            </button>
+
+                            {/* Comment Button */}
+                            <button
+                                onClick={toggleComments}
+                                className="flex items-center space-x-2 text-gray-500 hover:text-gray-900 transition-colors"
+                            >
+                                <MessageCircle className="w-5 h-5" />
+                                <span className="text-sm font-medium">{comments.length}</span>
+                            </button>
+                        </div>
                     </div>
 
                     {/* Image after author info */}

@@ -1,15 +1,17 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/api", // Backend base URL
+  baseURL: "http://localhost:8080/api",
 });
 
-// Add a request interceptor to include the JWT token in the headers
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token"); // Get the token from local storage
+    const token = localStorage.getItem("token");
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`; // Add the token to the headers
+      config.headers.Authorization = `Bearer ${token}`;
+      console.log("Sending token:", token); // Debug log
+    } else {
+      console.warn("No token found in localStorage for request:", config.url);
     }
     return config;
   },

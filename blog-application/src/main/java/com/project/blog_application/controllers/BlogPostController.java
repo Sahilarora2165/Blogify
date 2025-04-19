@@ -32,7 +32,6 @@ import com.project.blog_application.services.BlogPostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 @RestController
 @RequestMapping("/api/posts")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -42,7 +41,6 @@ public class BlogPostController {
 
     private final BlogPostService blogPostService;
     private final UserRepository userRepository;
-
 
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -109,7 +107,7 @@ public class BlogPostController {
                 blogPost.setImageUrl(imageUrl);
             }
 
-            BlogPost savedPost = blogPostService.createPost(blogPost,user.get());
+            BlogPost savedPost = blogPostService.createPost(blogPost, user.get());
             BlogPostDTO response = new BlogPostDTO(savedPost);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (IOException e) {
@@ -199,7 +197,13 @@ public class BlogPostController {
     // Only **authenticated users** can delete a post
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{id}")
-    public void deletePost(@PathVariable Long id) {
-        blogPostService.deletePost(id);
+    public ResponseEntity<String> deletePost(@PathVariable Long id) {
+        try {
+            blogPostService.deletePost(id);
+            return ResponseEntity.ok("Post deleted");
+        } catch (Exception e) {
+            logger.error("Failed to delete post {}: {}", id, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Delete failed: " + e.getMessage());
+        }
     }
 }

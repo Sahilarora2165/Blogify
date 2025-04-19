@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { motion } from "framer-motion";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -23,7 +24,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/auth/login", // Replace with your actual backend URL
+        "http://localhost:8080/api/auth/login",
         { email, password }
       );
       
@@ -46,91 +47,109 @@ const Login = () => {
   };
 
   return (
-    <div className="relative flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="relative flex items-center justify-center min-h-screen bg-black font-sans">
       {/* Background Overlay */}
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
         style={{
           backgroundImage: `url('/bg.jpg')`,
-          filter: "blur(10px)",
-          backgroundColor: "rgba(0, 0, 0, 0.4)",
-          backgroundBlendMode: "overlay",
+          filter: "blur(8px) grayscale(100%)",
         }}
       ></div>
 
       {/* Login Form Container */}
-      <div className="relative z-10 w-full max-w-md p-8 mx-4 bg-white rounded-2xl shadow-xl bg-opacity-95 transition-all duration-300 hover:shadow-2xl">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-2 tracking-tight">
-          Welcome Back
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="relative z-10 w-full max-w-md p-8 mx-4 bg-white rounded-2xl shadow-2xl border border-gray-200"
+      >
+        <h2 className="text-4xl font-bold text-center text-black mb-2 tracking-tight uppercase">
+          Sign In
         </h2>
-        <p className="text-center text-gray-500 text-sm mb-6 font-light">
-          Sign in to your account
+        <p className="text-center text-gray-600 text-sm mb-8 font-light tracking-wide">
+          Access your account
         </p>
 
         {error && (
-          <p className="text-red-500 text-center mb-4 text-sm font-medium bg-red-50 py-2 rounded-md">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-red-600 text-center mb-6 text-sm font-medium bg-red-100 py-2 rounded-lg border border-red-200"
+          >
             {error}
-          </p>
+          </motion.p>
         )}
 
-        <form onSubmit={handleLogin}>
-          <div className="mb-6">
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div>
             <label
               htmlFor="email"
-              className="block text-gray-700 text-sm font-semibold mb-2"
+              className="block text-black text-sm font-medium mb-2 uppercase tracking-wider"
             >
               Email
             </label>
             <input
               id="email"
               type="email"
-              className="w-full px-4 py-3 text-gray-700 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200 hover:border-indigo-300"
-              placeholder="Enter your email"
+              className="w-full px-4 py-3 text-black bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-all duration-300 placeholder-gray-500"
+              placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
 
-          <div className="mb-4 relative">
+          <div className="relative">
             <label
               htmlFor="password"
-              className="block text-gray-700 text-sm font-semibold mb-2"
+              className="block text-black text-sm font-medium mb-2 uppercase tracking-wider"
             >
               Password
             </label>
             <input
               id="password"
               type={showPassword ? "text" : "password"}
-              className="w-full px-4 py-3 text-gray-700 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200 hover:border-indigo-300"
-              placeholder="Enter your password"
+              className="w-full px-4 py-3 text-black bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-all duration-300 placeholder-gray-500"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
             <button
               type="button"
-              className="absolute right-3 top-11 text-gray-500 text-sm font-medium hover:text-indigo-600 transition-colors"
+              className="absolute right-3 top-11 text-gray-600 text-sm font-medium hover:text-black transition-colors duration-200"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? "Hide" : "Show"}
             </button>
           </div>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={isLoading}
-            className={`w-full py-3 text-white font-semibold rounded-lg shadow-md transition-all duration-300 ${
+            className={`w-full py-3 text-white font-medium rounded-lg shadow-md transition-all duration-300 uppercase tracking-wider ${
               isLoading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 hover:shadow-lg"
+                ? "bg-gray-500 cursor-not-allowed"
+                : "bg-black hover:bg-gray-800"
             }`}
           >
             {isLoading ? "Signing In..." : "Sign In"}
-          </button>
+          </motion.button>
         </form>
-      </div>
 
+        <p className="text-center text-gray-600 text-sm mt-6 font-light">
+          Don’t have an account?{" "}
+          <a
+            href="/signup"
+            className="text-black font-medium hover:underline transition-all duration-200"
+          >
+            Sign Up
+          </a>
+        </p>
+      </motion.div>
     </div>
   );
 };
