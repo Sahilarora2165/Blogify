@@ -3,6 +3,8 @@ package com.project.blog_application.services;
 import com.project.blog_application.entities.BlogPost;
 import com.project.blog_application.entities.Role;
 import com.project.blog_application.entities.User;
+import com.project.blog_application.repository.BlogPostRepository;
+import com.project.blog_application.repository.CommentRepository;
 import com.project.blog_application.repository.UserRepository;
 import com.project.blog_application.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +34,20 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
+    private final BlogPostRepository blogPostRepository;
+    private final CommentRepository commentRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final FileStorageService fileStorageService;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil,
+    public UserService(UserRepository userRepository, BlogPostRepository blogPostRepository,
+            CommentRepository commentRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil,
             FileStorageService fileStorageService) {
         this.fileStorageService = fileStorageService;
         this.userRepository = userRepository;
+        this.blogPostRepository = blogPostRepository;
+        this.commentRepository = commentRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         logger.info("UserService initialized with JwtUtil");
@@ -230,15 +237,17 @@ public class UserService {
         logger.info("User and associated posts deleted: {}", existingUser.getUsername());
     }
 
-    // User statistics
+    // User statistics - Using optimized count queries instead of loading entire collections
+    // This fixes N+1 query problem by using direct COUNT queries
     public Map<String, Long> getUserStatistics(Long userId) {
-        User user = getUserById(userId);
-        long postCount = user.getBlogPosts().size();
-        long commentCount = user.getComments().size();
-
+        // Verify user exists - using existsById is more efficient than loading the full user
+        if (!userRepository.existsById(userId)) {
+            throw new RuntimeException("User not found with id: " + userId);
+        }
+        
         Map<String, Long> statistics = new HashMap<>();
-        statistics.put("postCount", postCount);
-        statistics.put("commentCount", commentCount);
+        statistics.put("postCount", blogPostRepository.countByUserId(userId));
+        statistics.put("commentCount", commentRepository.countByUserId(userId));
         return statistics;
     }
 }

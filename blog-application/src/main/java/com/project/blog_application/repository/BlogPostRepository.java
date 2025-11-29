@@ -44,5 +44,9 @@ public interface BlogPostRepository extends JpaRepository<BlogPost, Long> {
 
     // Find top 10 posts by creation date
     List<BlogPost> findTop10ByOrderByCreatedAtDesc();
+
+    // Count posts by user ID - Performance optimization to avoid N+1 query problem
+    @Query("SELECT COUNT(p) FROM BlogPost p WHERE p.user.id = :userId")
+    Long countByUserId(@Param("userId") Long userId);
     
 }

@@ -8,6 +8,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -18,7 +19,11 @@ import lombok.AllArgsConstructor;
 import lombok.ToString;
 
 @Entity
-@Table(name = "comments")
+@Table(name = "comments", indexes = {
+    @Index(name = "idx_comment_user_id", columnList = "user_id"),
+    @Index(name = "idx_comment_blog_post_id", columnList = "blog_post_id"),
+    @Index(name = "idx_comment_created_at", columnList = "created_at")
+})
 @Getter
 @Setter
 @NoArgsConstructor

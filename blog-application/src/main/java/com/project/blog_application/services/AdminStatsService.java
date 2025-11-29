@@ -2,11 +2,16 @@ package com.project.blog_application.services;
 
 import com.project.blog_application.repository.UserRepository;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.project.blog_application.repository.BlogPostRepository;
 import com.project.blog_application.repository.CommentRepository;
 
+/**
+ * Service class for retrieving admin statistics with caching enabled.
+ * Caching reduces database load for frequently accessed count queries.
+ */
 @Service
 public class AdminStatsService {
 
@@ -20,14 +25,17 @@ public class AdminStatsService {
         this.userRepository = userRepository;
     }
     
-
+    @Cacheable("userCount")
     public long getUserCount(){
         return userRepository.count();
     }
 
+    @Cacheable("commentCount")
     public long getCommentCount(){
         return commentRepository.count();
     }
+
+    @Cacheable("postCount")
     public long getPostCount(){
         return blogPostRepository.count();
     }

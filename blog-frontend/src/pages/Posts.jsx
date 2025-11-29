@@ -9,7 +9,8 @@ const Posts = () => {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
-    const [postsPerPage] = useState(100);
+    // Reduced posts per page from 100 to 10 for better performance and user experience
+    const [postsPerPage] = useState(10);
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
 

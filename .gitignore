@@ -1,0 +1,19 @@
+# Backend - Maven/Java
+blog-application/target/
+*.class
+*.jar
+*.log
+
+# Frontend - Node.js
+blog-frontend/node_modules/
+blog-frontend/dist/
+blog-frontend/package-lock.json
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
