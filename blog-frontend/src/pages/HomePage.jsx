@@ -81,6 +81,7 @@ const HomePage = () => {
                   <img
                     src={`http://localhost:8080${post.imageUrl}`}
                     alt={post.title}
+                    loading="lazy"
                     className="w-full h-full object-cover rounded-xl transition-transform duration-300 group-hover:scale-105"
                     onError={(e) => {
                       e.target.src = "https://via.placeholder.com/300x200?text=No+Image";

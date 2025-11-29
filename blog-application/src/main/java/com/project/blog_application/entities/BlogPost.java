@@ -17,7 +17,10 @@ import lombok.*;
 
 
 @Entity
-@Table(name = "blog_posts")
+@Table(name = "blog_posts", indexes = {
+    @Index(name = "idx_blog_post_user_id", columnList = "user_id"),
+    @Index(name = "idx_blog_post_created_at", columnList = "created_at")
+})
 @Getter
 @Setter
 @NoArgsConstructor

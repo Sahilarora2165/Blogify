@@ -320,6 +320,7 @@ const PostContent = () => {
                         <img
                             src={`http://localhost:8080${post.imageUrl}`}
                             alt={post.title}
+                            loading="lazy"
                             className="w-full h-96 object-cover mb-8 rounded-xl"
                             onError={(e) => {
                                 e.target.style.display = "none";

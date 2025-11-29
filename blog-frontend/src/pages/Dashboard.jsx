@@ -5,6 +5,9 @@ import axios from "axios";
 /**
  * Dashboard component displaying statistics for users, posts, and comments, along with recent activities.
  * Requires a valid JWT token stored in localStorage for authenticated API calls.
+ * 
+ * Performance optimization: Uses consolidated /api/dashboard/stats endpoint instead of 4 separate API calls.
+ * This reduces network overhead and improves page load time.
  */
 const Dashboard = () => {
     const [stats, setStats] = useState([
@@ -29,27 +32,19 @@ const Dashboard = () => {
         const fetchDashboardData = async () => {
             setLoading(true);
             try {
-                const [usersResponse, postsResponse, commentsResponse, activitiesResponse] = await Promise.all([
-                    axios.get("http://localhost:8080/api/users/count", {
-                        headers: { Authorization: `Bearer ${token}` },
-                    }),
-                    axios.get("http://localhost:8080/api/posts/count", {
-                        headers: { Authorization: `Bearer ${token}` },
-                    }),
-                    axios.get("http://localhost:8080/api/comments/count", {
-                        headers: { Authorization: `Bearer ${token}` },
-                    }),
-                    axios.get("http://localhost:8080/api/activities/recent", {
-                        headers: { Authorization: `Bearer ${token}` },
-                    }),
-                ]);
+                // Single API call instead of 4 separate calls - Performance optimization
+                const response = await axios.get("http://localhost:8080/api/dashboard/stats", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                const { userCount, postCount, commentCount, recentActivities: activities } = response.data;
 
                 setStats([
-                    { title: "Total Users", value: usersResponse.data.toLocaleString(), link: "/admin/users" },
-                    { title: "Total Posts", value: postsResponse.data.toLocaleString(), link: "/admin/posts" },
-                    { title: "Total Comments", value: commentsResponse.data.toLocaleString(), link: "/admin/comments" },
+                    { title: "Total Users", value: userCount.toLocaleString(), link: "/admin/users" },
+                    { title: "Total Posts", value: postCount.toLocaleString(), link: "/admin/posts" },
+                    { title: "Total Comments", value: commentCount.toLocaleString(), link: "/admin/comments" },
                 ]);
-                setRecentActivities(activitiesResponse.data.slice(0, 5));
+                setRecentActivities(activities.slice(0, 5));
                 setError("");
             } catch (err) {
                 let errorMessage = "Failed to load dashboard data";

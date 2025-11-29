@@ -11,9 +11,16 @@ import lombok.AllArgsConstructor;
 
 
 @Entity
-@Table(name = "likes", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"user_id", "blog_post_id"})
-})
+@Table(name = "likes", 
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"user_id", "blog_post_id"})
+    },
+    indexes = {
+        @Index(name = "idx_like_user_id", columnList = "user_id"),
+        @Index(name = "idx_like_blog_post_id", columnList = "blog_post_id"),
+        @Index(name = "idx_like_created_at", columnList = "created_at")
+    }
+)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
