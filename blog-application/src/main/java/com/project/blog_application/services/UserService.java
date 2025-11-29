@@ -240,8 +240,10 @@ public class UserService {
     // User statistics - Using optimized count queries instead of loading entire collections
     // This fixes N+1 query problem by using direct COUNT queries
     public Map<String, Long> getUserStatistics(Long userId) {
-        // Verify user exists
-        getUserById(userId);
+        // Verify user exists - using existsById is more efficient than loading the full user
+        if (!userRepository.existsById(userId)) {
+            throw new RuntimeException("User not found with id: " + userId);
+        }
         
         Map<String, Long> statistics = new HashMap<>();
         statistics.put("postCount", blogPostRepository.countByUserId(userId));
