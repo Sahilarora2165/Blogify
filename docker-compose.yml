@@ -36,7 +36,9 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE:-blog_db}
       MYSQL_USER: root
       MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:-password}
-      JWT_SECRET: ${JWT_SECRET:-your-secret-key-here-please-change-in-production}
+      # IMPORTANT: Change JWT_SECRET in .env file before production use
+      # Default is intentionally weak to force configuration
+      JWT_SECRET: ${JWT_SECRET:-INSECURE-CHANGE-THIS-IN-ENV-FILE}
     ports:
       - "8080:8080"
     volumes:

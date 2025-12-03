@@ -19,8 +19,8 @@ WORKDIR /app
 # Create uploads directory
 RUN mkdir -p /app/uploads
 
-# Copy the built JAR file (correct artifact name)
-COPY --from=build /app/target/blog-application-0.0.1-SNAPSHOT.jar app.jar
+# Copy the built JAR file (using wildcard for version flexibility)
+COPY --from=build /app/target/*.jar app.jar
 
 # Expose port
 EXPOSE 8080
