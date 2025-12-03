@@ -7,8 +7,6 @@ services:
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE:-blog_db}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-password}
-      MYSQL_USER: ${MYSQL_USER:-bloguser}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-password}
     ports:
       - "3306:3306"
     volumes:

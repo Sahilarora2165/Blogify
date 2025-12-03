@@ -74,3 +74,5 @@ echo "  2. Run: docker compose up --build"
 echo "  3. Access frontend at http://localhost:3000"
 echo "  4. Read DOCKER_GUIDE.md for detailed instructions"
 echo ""
+
+exit 0
