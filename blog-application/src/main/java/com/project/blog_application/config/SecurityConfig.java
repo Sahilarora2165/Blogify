@@ -60,6 +60,7 @@ public class SecurityConfig {
                                 "/api/comments",
                                 "api/likes/test",
                                 "api/likes/count/{id}",
+                                "/api/health",
                                 "/api/comments/{id}",
                                 "/api/comments/blog/{BlogPostId}",
                                 "/uploads/**").permitAll()

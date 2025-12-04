@@ -10,28 +10,54 @@ const HomePage = () => {
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get("http://localhost:8080/api/posts");
-        const fetchedPosts = response.data.content || response.data;
-        // Add random height to each post for dynamic sizing
-        const postsWithRandomHeight = fetchedPosts.map(post => ({
-          ...post,
-          cardHeight: Math.floor(Math.random() * (400 - 300 + 1)) + 300, // Random height between 300px and 400px
-        }));
-        setPosts(postsWithRandomHeight);
-        setError("");
-      } catch (err) {
-        setError("Failed to load posts. Please try again later.");
-        console.error("Error fetching posts:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPosts();
-  }, []);
+//   useEffect(() => {
+//     const fetchPosts = async () => {
+//       setLoading(true);
+//       try {
+//         const response = await axios.get("http://localhost:8080/api/posts");
+//         const fetchedPosts = response.data.content || response.data;
+//         // Add random height to each post for dynamic sizing
+//         const postsWithRandomHeight = fetchedPosts.map(post => ({
+//           ...post,
+//           cardHeight: Math.floor(Math.random() * (400 - 300 + 1)) + 300, // Random height between 300px and 400px
+//         }));
+//         setPosts(postsWithRandomHeight);
+//         setError("");
+//       } catch (err) {
+//         setError("Failed to load posts. Please try again later.");
+//         console.error("Error fetching posts:", err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     fetchPosts();
+//   }, []);
+
+    useEffect(() => {
+      const fetchPosts = async () => {
+        setLoading(true);
+        try {
+          // ✅ Use the proxy-compatible base URL
+          const API_BASE = import.meta.env.VITE_API_URL; // This is "/api"
+          const response = await axios.get(`${API_BASE}/posts`);
+
+          const fetchedPosts = response.data.content || response.data;
+          const postsWithRandomHeight = fetchedPosts.map(post => ({
+            ...post,
+            cardHeight: Math.floor(Math.random() * (400 - 300 + 1)) + 300,
+          }));
+          setPosts(postsWithRandomHeight);
+          setError("");
+        } catch (err) {
+          setError("Failed to load posts. Please try again later.");
+          console.error("Error fetching posts:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchPosts();
+    }, []);
 
   const filteredPosts = posts.filter(post =>
     post.title.toLowerCase().includes(searchQuery.toLowerCase())
