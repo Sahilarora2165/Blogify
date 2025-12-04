@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_BASE_URL, BASE_URL } from "../config";
 import HomeHeader from "../components/HomeHeader";
 import { MessageCircle, X, ThumbsUp } from "lucide-react"; // Added ThumbsUp icon
 
@@ -40,10 +41,10 @@ const PostContent = () => {
             setError(null);
 
             try {
-                const postResponse = await axios.get(`http://localhost:8080/api/posts/${id}`, { timeout: 5000 });
+                const postResponse = await axios.get(`${API_BASE_URL}/posts/${id}`, { timeout: 5000 });
                 setPost(postResponse.data);
 
-                const commentsResponse = await axios.get(`http://localhost:8080/api/comments/blog/${id}`, { timeout: 5000 });
+                const commentsResponse = await axios.get(`${API_BASE_URL}/comments/blog/${id}`, { timeout: 5000 });
                 setComments(commentsResponse.data || []);
             } catch (err) {
                 const errorDetails = {
@@ -75,7 +76,7 @@ const PostContent = () => {
         const fetchLikes = async () => {
             try {
                 // Fetch total like count for the post
-                const likesResponse = await axios.get(`http://localhost:8080/api/likes/count/${id}`, {
+                const likesResponse = await axios.get(`${API_BASE_URL}/likes/count/${id}`, {
                     timeout: 5000
                 });
                 // Convert likes to a number to ensure proper math operations
@@ -85,14 +86,14 @@ const PostContent = () => {
                 if (!token) return; // No token means user is not logged in
 
                 // Get user ID from backend
-                const userResponse = await axios.get("http://localhost:8080/api/users/me", {
+                const userResponse = await axios.get(`${API_BASE_URL}/users/me`, {
                     headers: { Authorization: `Bearer ${token}` },
                     timeout: 5000
                 });
                 const userId = userResponse.data.id;
 
                 // Check if user has liked the post
-                const userLikeResponse = await axios.get(`http://localhost:8080/api/likes/status`, {
+                const userLikeResponse = await axios.get(`${API_BASE_URL}/likes/status`, {
                     params: { userId, blogPostId: id },
                     headers: { Authorization: `Bearer ${token}` },
                     timeout: 5000
@@ -128,7 +129,7 @@ const PostContent = () => {
 
         try {
             // Step 1: Get user ID
-            const userResponse = await axios.get("http://localhost:8080/api/users/me", {
+            const userResponse = await axios.get(`${API_BASE_URL}/users/me`, {
                 headers: { Authorization: `Bearer ${token}` },
                 timeout: 5000
             });
@@ -144,7 +145,7 @@ const PostContent = () => {
 
             // Step 2: Toggle like (API call)
             await axios.post(
-                "http://localhost:8080/api/likes/toggle",
+                `${API_BASE_URL}/likes/toggle`,
                 null, // No request body, just params
                 {
                     headers: { Authorization: `Bearer ${token}` },
@@ -187,14 +188,14 @@ const PostContent = () => {
         if (!newComment.trim()) return;
 
         try {
-            const userResponse = await axios.get("http://localhost:8080/api/users/me", {
+            const userResponse = await axios.get(`${API_BASE_URL}/users/me`, {
                 headers: { Authorization: `Bearer ${token}` },
                 timeout: 5000
             });
             const userId = userResponse.data.id;
 
             const commentResponse = await axios.post(
-                "http://localhost:8080/api/comments",
+                `${API_BASE_URL}/comments`,
                 newComment, // Plain text body
                 {
                     headers: {
@@ -318,7 +319,7 @@ const PostContent = () => {
                     {/* Image after author info */}
                     {post.imageUrl && (
                         <img
-                            src={`http://localhost:8080${post.imageUrl}`}
+                            src={`${BASE_URL}${post.imageUrl}`}
                             alt={post.title}
                             loading="lazy"
                             className="w-full h-96 object-cover mb-8 rounded-xl"

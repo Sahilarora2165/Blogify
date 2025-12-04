@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
 
 /**
  * Comment detail page for the admin dashboard, displaying full comment details.
@@ -26,7 +27,7 @@ const CommentDetail = () => {
         const fetchComment = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`http://localhost:8080/api/comments/${id}`, {
+                const response = await axios.get(`${API_BASE_URL}/comments/${id}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setComment(response.data);

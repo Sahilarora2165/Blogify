@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import HomeHeader from "../components/HomeHeader";
 import Footer from "../components/Footer"; // Import the Footer component
+import { API_BASE_URL, BASE_URL } from "../config";
 
 const HomePage = () => {
   const [posts, setPosts] = useState([]);
@@ -14,7 +15,7 @@ const HomePage = () => {
     const fetchPosts = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("http://localhost:8080/api/posts");
+        const response = await axios.get(`${API_BASE_URL}/posts`);
         const fetchedPosts = response.data.content || response.data;
         // Add random height to each post for dynamic sizing
         const postsWithRandomHeight = fetchedPosts.map(post => ({
@@ -79,13 +80,13 @@ const HomePage = () => {
               {post.imageUrl ? (
                 <div className="relative w-full h-64 mb-5 overflow-hidden">
                   <img
-                    src={`http://localhost:8080${post.imageUrl}`}
+                    src={`${BASE_URL}${post.imageUrl}`}
                     alt={post.title}
                     loading="lazy"
                     className="w-full h-full object-cover rounded-xl transition-transform duration-300 group-hover:scale-105"
                     onError={(e) => {
                       e.target.src = "https://via.placeholder.com/300x200?text=No+Image";
-                      console.error("Image failed to load:", `http://localhost:8080${post.imageUrl}`);
+                      console.error("Image failed to load:", `${BASE_URL}${post.imageUrl}`);
                     }}
                   />
                   {/* Overlay on Hover */}

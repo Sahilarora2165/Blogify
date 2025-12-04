@@ -11,7 +11,7 @@ const RecentActivities = () => {
         const fetchRecentActivities = async () => {
             setLoading(true);
             try {
-                const response = await axios.get('http://localhost:8080/api/activities/recent', {
+                const response = await axios.get(`${API_BASE_URL}/activities/recent', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

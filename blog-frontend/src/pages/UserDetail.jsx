@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
 
 const UserDetail = () => {
     const { id } = useParams();
@@ -21,7 +22,7 @@ const UserDetail = () => {
         const fetchUser = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`http://localhost:8080/api/users/${id}`, {
+                const response = await axios.get(`${API_BASE_URL}/users/${id}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setUser(response.data);
