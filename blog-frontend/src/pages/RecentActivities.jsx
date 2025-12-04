@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from "../config";
 
 const RecentActivities = () => {
     const [activities, setActivities] = useState([]);
@@ -11,7 +12,7 @@ const RecentActivities = () => {
         const fetchRecentActivities = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`${API_BASE_URL}/activities/recent', {
+                const response = await axios.get(`${API_BASE_URL}/activities/recent`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
