@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import api from "../axios";
 import { Input } from "../components/ui/Input";
 import { Textarea } from "../components/ui/Textarea";
 import { Button } from "../components/ui/Button";
@@ -16,7 +16,6 @@ const WriteBlog = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const BASE_URL = "http://localhost:8080";
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -53,9 +52,8 @@ const WriteBlog = () => {
 
     setLoading(true);
     try {
-      await axios.post(`${BASE_URL}/api/posts`, formData, {
+      await api.post("/posts", formData, {
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });

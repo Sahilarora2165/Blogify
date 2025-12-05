@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../axios";
 
 /**
  * Edit user page for the admin dashboard, allowing updates with a success redirect.
@@ -26,9 +26,7 @@ const EditUser = () => {
         const fetchUser = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`http://localhost:8080/api/users/${id}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+                const response = await api.get(`/users/${id}`);
                 setUser({
                     username: response.data.username,
                     email: response.data.email,
@@ -72,9 +70,8 @@ const EditUser = () => {
         }
 
         try {
-            const response = await axios.put(`http://localhost:8080/api/users/${id}`, formData, {
+            const response = await api.put(`/users/${id}`, formData, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
                     "Content-Type": "multipart/form-data", // ✅ Required for form-data
                 },
             });

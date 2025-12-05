@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../axios";
 
 /**
  * Comment detail page for the admin dashboard, displaying full comment details.
@@ -26,9 +26,7 @@ const CommentDetail = () => {
         const fetchComment = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`http://localhost:8080/api/comments/${id}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+                const response = await api.get(`/comments/${id}`);
                 setComment(response.data);
                 setError("");
             } catch (err) {

@@ -1,5 +1,6 @@
 package com.project.blog_application.services;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,9 +13,10 @@ import java.util.UUID;
 @Service
 public class FileStorageService {
 
-    private final Path rootLocation = Paths.get("uploads");
+    private final Path rootLocation;
 
-    public FileStorageService() {
+    public FileStorageService(@Value("${file.upload-dir}") String uploadDir) {
+        this.rootLocation = Paths.get(uploadDir);
         try {
             Files.createDirectories(rootLocation);
         } catch (IOException e) {

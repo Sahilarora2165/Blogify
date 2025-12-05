@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../axios";
 
 /**
  * Edit comment page for the admin dashboard, allowing optional updates to comment content.
@@ -26,9 +26,7 @@ const EditComment = () => {
         const fetchComment = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`http://localhost:8080/api/comments/${id}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+                const response = await api.get(`/comments/${id}`);
                 setComment({ content: response.data.content || "" });
                 setError("");
             } catch (err) {
@@ -58,9 +56,8 @@ const EditComment = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.put(`http://localhost:8080/api/comments/${id}`, comment.content, {
+            const response = await api.put(`/comments/${id}`, comment.content, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
                     'Content-Type': 'text/plain',
                 },
             });

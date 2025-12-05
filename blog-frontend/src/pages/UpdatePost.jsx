@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import api from "../axios";
 import { Input } from "../components/ui/Input";
 import { Textarea } from "../components/ui/Textarea";
 import { Button } from "../components/ui/Button";
@@ -17,19 +17,16 @@ const UpdatePost = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const BASE_URL = "http://localhost:8080";
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/api/posts/${postId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await api.get(`/posts/${postId}`);
         const post = response.data;
         setTitle(post.title);
         setContent(post.content);
         if (post.imageUrl) {
-          setCurrentImage(`${BASE_URL}${post.imageUrl}`);
+          setCurrentImage(post.imageUrl);
         }
       } catch (err) {
         setError("Failed to fetch post details.");
@@ -68,9 +65,8 @@ const UpdatePost = () => {
 
     setLoading(true);
     try {
-      await axios.put(`${BASE_URL}/api/posts/${postId}`, formData, {
+      await api.put(`/posts/${postId}`, formData, {
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
         maxBodyLength: Infinity,
