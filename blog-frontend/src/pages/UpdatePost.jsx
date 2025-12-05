@@ -6,7 +6,7 @@ import { Textarea } from "../components/ui/Textarea";
 import { Button } from "../components/ui/Button";
 import { Image, X } from "lucide-react";
 import { motion } from "framer-motion";
-import { API_BASE_URL } from "../config";
+import { API_BASE_URL, BASE_URL } from "../config";
 
 const UpdatePost = () => {
   const { postId } = useParams();
