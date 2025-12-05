@@ -1,0 +1,9 @@
+.git
+.gitignore
+*.md
+README.md
+PERFORMANCE_OPTIMIZATIONS.md
+uploads
+.env
+.DS_Store
+Thumbs.db
