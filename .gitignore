@@ -3,6 +3,8 @@ blog-application/target/
 *.class
 *.jar
 *.log
+.env
+*. env
 
 # Frontend - Node.js
 blog-frontend/node_modules/

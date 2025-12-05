@@ -5,7 +5,7 @@ services:
     image: mysql:8.0
     container_name: blogify-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-sahil1175}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-blog_db}
     ports:
       - "3307:3306"
@@ -27,7 +27,7 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - DB_URL=${DB_URL:-jdbc:mysql://mysql:3306/blog_db}
       - DB_USERNAME=${DB_USERNAME:-root}
-      - DB_PASSWORD=${DB_PASSWORD:-rootpassword}
+      - DB_PASSWORD=${DB_PASSWORD:-sahil1175}
     ports:
       - "8080:8080"
     volumes:
