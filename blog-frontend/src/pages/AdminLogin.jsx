@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../axios";
-import axios from "axios";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
@@ -30,7 +29,6 @@ const AdminLogin = () => {
       
       const token = response.data.token;
       localStorage.setItem("token", token);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const payload = JSON.parse(atob(token.split(".")[1]));
       const role = payload.role;
 

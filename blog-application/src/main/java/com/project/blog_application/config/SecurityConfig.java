@@ -93,10 +93,8 @@ public class SecurityConfig {
         // Allow both development and Docker origins
         configuration.setAllowedOrigins(List.of(
             "http://localhost:5173",  // Development
-            "http://localhost:80",     // Docker on port 80
-            "http://localhost",        // Docker default
-            "http://frontend:80",      // Docker internal network
-            "http://frontend"          // Docker internal network default
+            "http://localhost",        // Docker on default HTTP port (80)
+            "http://frontend"          // Docker internal network
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
