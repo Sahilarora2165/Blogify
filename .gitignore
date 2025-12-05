@@ -19,3 +19,7 @@ blog-frontend/package-lock.json
 # OS
 .DS_Store
 Thumbs.db
+
+
+DOCKER_SETUP.md
+PERFORMANCE_OPTIMIZATIONS.md
