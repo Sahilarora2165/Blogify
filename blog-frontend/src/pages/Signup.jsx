@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { motion } from "framer-motion";
+import { API_BASE_URL } from "../config";
 
 const Signup = () => {
   const [username, setUsername] = useState("");
@@ -35,7 +36,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/signup", {
+      const response = await axios.post(`${API_BASE_URL}/auth/signup`, {
         username,
         email,
         password,

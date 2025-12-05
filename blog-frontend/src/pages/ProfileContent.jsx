@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
 import HomeHeader from "../components/HomeHeader";
 import { motion } from "framer-motion";
 
@@ -21,7 +22,7 @@ const ProfileContent = () => {
       try {
         // Fetch user by username
         console.log(`Fetching user profile for username: ${username}`);
-        const userResponse = await axios.get(`http://localhost:8080/api/users/username/${username}`, {
+        const userResponse = await axios.get(`${API_BASE_URL}/users/username/${username}`, {
           timeout: 5000,
         });
         console.log("User response:", userResponse.data);
@@ -33,7 +34,7 @@ const ProfileContent = () => {
         // Fetch user's posts by user ID
         const userId = userResponse.data.id;
         console.log(`Fetching posts for userId: ${userId}`);
-        const postsResponse = await axios.get(`http://localhost:8080/api/posts/user/${userId}`, {
+        const postsResponse = await axios.get(`${API_BASE_URL}/posts/user/${userId}`, {
           timeout: 5000,
         });
         console.log("Posts response:", postsResponse.data);

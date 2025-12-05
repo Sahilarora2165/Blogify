@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
 
 /**
  * Dashboard component displaying statistics for users, posts, and comments, along with recent activities.
@@ -33,7 +34,7 @@ const Dashboard = () => {
             setLoading(true);
             try {
                 // Single API call instead of 4 separate calls - Performance optimization
-                const response = await axios.get("http://localhost:8080/api/dashboard/stats", {
+                const response = await axios.get(`${API_BASE_URL}/dashboard/stats`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 

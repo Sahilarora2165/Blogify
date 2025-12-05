@@ -6,6 +6,7 @@ import { Textarea } from "../components/ui/Textarea";
 import { Button } from "../components/ui/Button";
 import { Image, X } from "lucide-react";
 import { motion } from "framer-motion";
+import { API_BASE_URL, BASE_URL } from "../config";
 
 const UpdatePost = () => {
   const { postId } = useParams();
@@ -17,12 +18,11 @@ const UpdatePost = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const BASE_URL = "http://localhost:8080";
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/api/posts/${postId}`, {
+        const response = await axios.get(`${API_BASE_URL}/posts/${postId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const post = response.data;
@@ -68,7 +68,7 @@ const UpdatePost = () => {
 
     setLoading(true);
     try {
-      await axios.put(`${BASE_URL}/api/posts/${postId}`, formData, {
+      await axios.put(`${API_BASE_URL}/posts/${postId}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",

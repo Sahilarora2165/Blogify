@@ -90,7 +90,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Allow frontend origin
+        // Allow both development (Vite) and Docker frontend origins
+        configuration.setAllowedOrigins(List.of(
+            "http://localhost:5173",  // Vite dev server
+            "http://localhost:3000"   // Docker frontend
+        ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

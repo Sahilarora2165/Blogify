@@ -7,6 +7,7 @@ import { Button } from "../components/ui/Button";
 import { Image, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
+import { API_BASE_URL } from "../config";
 
 const WriteBlog = () => {
   const [title, setTitle] = useState("");
@@ -16,7 +17,6 @@ const WriteBlog = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const BASE_URL = "http://localhost:8080";
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -53,7 +53,7 @@ const WriteBlog = () => {
 
     setLoading(true);
     try {
-      await axios.post(`${BASE_URL}/api/posts`, formData, {
+      await axios.post(`${API_BASE_URL}/posts`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",

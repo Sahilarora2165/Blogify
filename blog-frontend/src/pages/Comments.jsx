@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
 
 /**
  * Admin comments page for the admin dashboard, displaying all comments with actions.
@@ -26,7 +27,7 @@ const Comments = () => {
         const fetchComments = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`http://localhost:8080/api/comments`, {
+                const response = await axios.get(`${API_BASE_URL}/comments`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setComments(response.data.content || response.data); // Handle both Page and List responses
@@ -76,7 +77,7 @@ const Comments = () => {
             console.log("Token:", token);
 
             try {
-                await axios.delete(`http://localhost:8080/api/comments/${commentId}`, {
+                await axios.delete(`${API_BASE_URL}/comments/${commentId}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setComments(comments.filter(comment => comment.id !== commentId));
