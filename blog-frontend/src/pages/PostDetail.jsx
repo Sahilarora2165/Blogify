@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../axios";
 import { motion } from "framer-motion";
 
 const PostDetail = () => {
@@ -22,9 +22,7 @@ const PostDetail = () => {
     const fetchPost = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`http://localhost:8080/api/posts/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await api.get(`/posts/${id}`);
         setPost(response.data);
         setError("");
       } catch (err) {
@@ -116,7 +114,7 @@ const PostDetail = () => {
               {post.imageUrl && (
                 <div className="mb-6">
                   <img
-                    src={`http://localhost:8080${post.imageUrl}`}
+                    src={post.imageUrl}
                     alt={post.title}
                     className="max-w-full h-64 object-cover rounded-xl shadow-md"
                     onError={(e) => {

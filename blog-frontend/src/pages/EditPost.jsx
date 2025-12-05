@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../axios";
 
 /**
  * Edit post page for the admin dashboard, allowing optional updates to post details including images.
@@ -28,9 +28,7 @@ const EditPost = () => {
         const fetchPost = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`http://localhost:8080/api/posts/${id}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+                const response = await api.get(`/posts/${id}`);
                 setPost({
                     title: response.data.title || "",
                     content: response.data.content || "",
@@ -84,9 +82,8 @@ const EditPost = () => {
         console.log("Token:", token);
 
         try {
-            const response = await axios.put(`http://localhost:8080/api/posts/${id}`, formData, {
+            const response = await api.put(`/posts/${id}`, formData, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
                     "Content-Type": "multipart/form-data",
                 },
             });
@@ -210,7 +207,7 @@ const EditPost = () => {
                                 {post.imageUrl && !imageFile && (
                                     <div className="flex items-center space-x-4">
                                         <img
-                                            src={`http://localhost:8080${post.imageUrl}`}
+                                            src={post.imageUrl}
                                             alt="Current post"
                                             className="w-24 h-24 object-cover rounded-lg shadow-sm"
                                         />

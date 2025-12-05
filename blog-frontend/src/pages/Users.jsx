@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../axios";
 
 const Users = () => {
     const [users, setUsers] = useState([]);
@@ -23,9 +23,7 @@ const Users = () => {
         const fetchUsers = async () => {
             setLoading(true);
             try {
-                const response = await axios.get("http://localhost:8080/api/users", {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+                const response = await api.get("/users");
                 setUsers(response.data);
                 setError("");
             } catch (err) {
@@ -66,9 +64,7 @@ const Users = () => {
     const handleDelete = async (userId) => {
         if (window.confirm("Are you sure you want to delete this user?")) {
             try {
-                await axios.delete(`http://localhost:8080/api/users/${userId}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+                await api.delete(`/users/${userId}`);
                 setUsers(users.filter(user => user.id !== userId));
                 setError("");
             } catch (err) {

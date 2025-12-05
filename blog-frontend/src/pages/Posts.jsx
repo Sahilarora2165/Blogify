@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../axios";
 import { motion } from "framer-motion";
 
 const Posts = () => {
@@ -25,9 +25,7 @@ const Posts = () => {
         const fetchPosts = async (page = 0, size = 8) => {
             setLoading(true);
             try {
-                const response = await axios.get(`http://localhost:8080/api/posts?page=${page}&size=${size}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+                const response = await api.get(`/posts?page=${page}&size=${size}`);
                 setPosts(response.data.content);
                 setError("");
             } catch (err) {
@@ -68,9 +66,7 @@ const Posts = () => {
     const handleDelete = async (postId) => {
         if (window.confirm("Are you sure you want to delete this post?")) {
             try {
-                await axios.delete(`http://localhost:8080/api/posts/${postId}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+                await api.delete(`/posts/${postId}`);
                 setPosts(posts.filter(post => post.id !== postId));
                 setError("");
             } catch (err) {

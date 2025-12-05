@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import api from "../axios";
 import toast, { Toaster } from "react-hot-toast";
 import { motion } from "framer-motion";
 
@@ -35,7 +35,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/signup", {
+      const response = await api.post("/auth/signup", {
         username,
         email,
         password,

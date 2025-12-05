@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/posts")
-@CrossOrigin(origins = "http://localhost:5173")
 public class BlogPostController {
 
     private static final Logger logger = LoggerFactory.getLogger(BlogPostController.class);
