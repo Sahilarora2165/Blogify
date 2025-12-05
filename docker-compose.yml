@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: blogify-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-blog_db}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - blogify-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  backend:
+    build:
+      context: ./blog-application
+      dockerfile: Dockerfile
+    container_name: blogify-backend
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_URL=${DB_URL:-jdbc:mysql://mysql:3306/blog_db}
+      - DB_USERNAME=${DB_USERNAME:-root}
+      - DB_PASSWORD=${DB_PASSWORD:-rootpassword}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./uploads:/app/uploads
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - blogify-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./blog-frontend
+      dockerfile: Dockerfile
+    container_name: blogify-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - blogify-network
+    restart: unless-stopped
+
+networks:
+  blogify-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
