@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../axios";
 import { motion } from "framer-motion";
 
 const Login = () => {
@@ -23,14 +23,13 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/auth/login",
+      const response = await api.post(
+        "/auth/login",
         { email, password }
       );
       
       const token = response.data.token;
       localStorage.setItem("token", token);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const payload = JSON.parse(atob(token.split(".")[1]));
       const role = payload.role;
 

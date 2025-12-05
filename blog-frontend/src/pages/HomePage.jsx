@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../axios";
 import HomeHeader from "../components/HomeHeader";
 import Footer from "../components/Footer"; // Import the Footer component
 
@@ -10,54 +10,28 @@ const HomePage = () => {
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
-//   useEffect(() => {
-//     const fetchPosts = async () => {
-//       setLoading(true);
-//       try {
-//         const response = await axios.get("http://localhost:8080/api/posts");
-//         const fetchedPosts = response.data.content || response.data;
-//         // Add random height to each post for dynamic sizing
-//         const postsWithRandomHeight = fetchedPosts.map(post => ({
-//           ...post,
-//           cardHeight: Math.floor(Math.random() * (400 - 300 + 1)) + 300, // Random height between 300px and 400px
-//         }));
-//         setPosts(postsWithRandomHeight);
-//         setError("");
-//       } catch (err) {
-//         setError("Failed to load posts. Please try again later.");
-//         console.error("Error fetching posts:", err);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-//     fetchPosts();
-//   }, []);
-
-    useEffect(() => {
-      const fetchPosts = async () => {
-        setLoading(true);
-        try {
-          // ✅ Use the proxy-compatible base URL
-          const API_BASE = import.meta.env.VITE_API_URL; // This is "/api"
-          const response = await axios.get(`${API_BASE}/posts`);
-
-          const fetchedPosts = response.data.content || response.data;
-          const postsWithRandomHeight = fetchedPosts.map(post => ({
-            ...post,
-            cardHeight: Math.floor(Math.random() * (400 - 300 + 1)) + 300,
-          }));
-          setPosts(postsWithRandomHeight);
-          setError("");
-        } catch (err) {
-          setError("Failed to load posts. Please try again later.");
-          console.error("Error fetching posts:", err);
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchPosts();
-    }, []);
+  useEffect(() => {
+    const fetchPosts = async () => {
+      setLoading(true);
+      try {
+        const response = await api.get("/posts");
+        const fetchedPosts = response.data.content || response.data;
+        // Add random height to each post for dynamic sizing
+        const postsWithRandomHeight = fetchedPosts.map(post => ({
+          ...post,
+          cardHeight: Math.floor(Math.random() * (400 - 300 + 1)) + 300, // Random height between 300px and 400px
+        }));
+        setPosts(postsWithRandomHeight);
+        setError("");
+      } catch (err) {
+        setError("Failed to load posts. Please try again later.");
+        console.error("Error fetching posts:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPosts();
+  }, []);
 
   const filteredPosts = posts.filter(post =>
     post.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -105,13 +79,13 @@ const HomePage = () => {
               {post.imageUrl ? (
                 <div className="relative w-full h-64 mb-5 overflow-hidden">
                   <img
-                    src={`http://localhost:8080${post.imageUrl}`}
+                    src={post.imageUrl}
                     alt={post.title}
                     loading="lazy"
                     className="w-full h-full object-cover rounded-xl transition-transform duration-300 group-hover:scale-105"
                     onError={(e) => {
                       e.target.src = "https://via.placeholder.com/300x200?text=No+Image";
-                      console.error("Image failed to load:", `http://localhost:8080${post.imageUrl}`);
+                      console.error("Image failed to load:", post.imageUrl);
                     }}
                   />
                   {/* Overlay on Hover */}
